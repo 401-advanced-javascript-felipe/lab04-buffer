@@ -1,72 +1,58 @@
 'use strict';
 
 const fs = require('fs');
+const reader = require('readline');
 
-const path = './files/pair-programming.html';
+class Converter {
 
-const articleStart = '<article>';
-const articleEnd = '</article>';
-const h2Start = '<h2>';
-const h2End = '</h2>';
+  constructor() {
+    this.buffer = Buffer.from('');
+    this.tags = {};
+  }
 
-const initArticle = () => fs.writeFile(path, articleStart, (err) => {
-  if (err) throw err;
-});
-let article = Buffer.from('');
+  createTag(tag, buffer) {
+    if(!this.tags[tag]) {
+      this.tags[tag] = {
+        open: Buffer.from(`<${tag}>`),
+        close: Buffer.from(`</${tag}>`),
+      };
+    }
 
-// fs.readFile(path, (err, data) => {
-//   if (err) throw err;
-//   console.log(data);
-//   return data;
-// });
+    this.buffer = Buffer.concat( [this.buffer, this.tags[tag].open, buffer, this.tags[tag].close]);
+  }
 
+  convert(file) {
 
+    let lineReader = reader.createInterface({
+      input: fs.createReadStream(file),
+    });
 
+    lineReader.on('line', function (line) {
+      if(line.match(/^[0-9]\./)) {
+        this.createTag('h3', Buffer.from(line));
+      }
+      else if(line.match(/\./)) {
+        line.split('.').forEach(sentence => {
+          sentence && this.createTag('li', Buffer.from(sentence));
+        });
+      }
+      else if(line) {
+        this.createTag('h2', Buffer.from(line));
+      }
+    }.bind(this));
 
-// const writeArticleStart = new Promise(
-//   (resolve, reject) => {
-//     resolve(fs.write(path, articleStart, (err, data) => {
-//       if (err) throw err;
-//       console.log(data);
-//     }));
-//   }
-// );
-
-
-fs.readFile(path, (err, data) => {
-  if (err) throw err;
-  // console.log(data);
-  return data;
-});
-  
-
-let readingArticle = () => new Promise((resolve, reject) => {
-  fs.readFile(path, (err, data) => {
-    if (err) throw err;
-    console.log('reading article', data);
-    article = Buffer.concat([article, data]);
-
-  });
-  resolve('Read Article');
-});
-
+    lineReader.on('close', () => {
+      fs.writeFile('./files/index.html', this.buffer, (err, data) => {
+        console.log('start live-server, file is here');
+      });
+    });
+  }
+}
 
 
 
+// let html = new Converter();
+// html.convert('./files/pair-programming.html');
 
-let createhtml = () => {
-  readingArticle()
-    .then(console.log('here', article))
-    .then(fs.appendFile(path, article, (err) => {
-      if (err) throw err;
-    }));
+module.exports = exports = Converter;
 
-};
-
-
-
-
-
-
-
-createhtml();
