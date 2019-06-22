@@ -13,4 +13,18 @@ describe('ConverterClass', () => {
     expect(conversion).toBeInstanceOf(Converter);
   });
 
+  it('should create opening tag', () => {
+    let tag = 'li';
+    let buffer = Buffer.from('hello');
+    conversion.createTag(tag, buffer);
+    expect(conversion.tags[tag].open).toStrictEqual(Buffer.from('<li>'));
+  });
+
+  it('should create closing tag', () => {
+    let tag = 'li';
+    let buffer = Buffer.from('hello');
+    conversion.createTag(tag, buffer);
+    expect(conversion.tags[tag].close).toStrictEqual(Buffer.from('</li>'));
+  });
+
 });
