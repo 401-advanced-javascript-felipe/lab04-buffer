@@ -1,0 +1,25 @@
+{
+  "name": "lab04-buffers",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint **/*.js",
+    "test": "jest --coverage --verbose",
+    "test-watch": "jest --watchAll --coverage --verbose"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/401-advanced-javascript-felipe/lab04-buffer.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/401-advanced-javascript-felipe/lab04-buffer/issues"
+  },
+  "homepage": "https://github.com/401-advanced-javascript-felipe/lab04-buffer#readme",
+  "dependencies": {
+    "eslint": "^5.16.0",
+    "jest": "^24.8.0"
+  }
+}
